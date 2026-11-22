@@ -9,6 +9,6 @@ public enum PropertyGroup {
     Yellow,
     Green,
     Blue,
-    Railway,
-    Energy
+    Black,
+    White
 }

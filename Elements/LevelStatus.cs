@@ -1,7 +1,7 @@
 namespace Monopoly.Elements;
 
 public enum LevelState {
-    Mortgaged,
+    Mortgaged = -1,
     Empty,
     House,
     Double,

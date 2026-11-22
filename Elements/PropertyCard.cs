@@ -17,7 +17,21 @@ public class PropertyCard : GameCard {
 
     public bool IsMortgaged => Level == LevelState.Mortgaged;
     public LevelState Level { get; private set; }
-    public PropertyGroup PropertyGroup { get; private set; }
+    public virtual bool Levelable { get; protected set; } = true;
+    public PropertyGroup Group { get; private set; }
+
+    public static PropertyCard Create<TCard>(string name, string qrId, PropertyGroup group, decimal price, decimal[] rentPrices) where TCard : GameCard {
+        var property = Activator.CreateInstance(typeof(TCard));
+        property.Name = name;
+        property.QrId = qrId;
+        property.Group = group;
+        property.Price = price;
+        property.RentPrices = rentPrices;
+    }
+
+    public static PropertyCard Create(string name, string qrId, PropertyGroup group, decimal price, decimal[] rentPrices) {
+        return Create<PropertyCard>(name, qrId, group, price, rentPrices);
+    }
 
     public void ChangeOwner(Player plr) {
         if (Owner != null) {
@@ -37,6 +51,7 @@ public class PropertyCard : GameCard {
     }
 
     public void LevelUp() {
+        if (!Levelable) return;
         if (Owner.Wallet.Balance < HouseCost) return;
         if (Level == LevelState.Hotel) return;
         // check if there are houses in the bank.
@@ -45,6 +60,7 @@ public class PropertyCard : GameCard {
     }
 
     public void LevelDown() {
+        if (!Levelable) return;
         if (Level == LevelState.Mortgaged) return;
         if (Level > LevelState.House) {
             Owner.Wallet.Balance += HouseSellPrice;
@@ -52,6 +68,11 @@ public class PropertyCard : GameCard {
             Owner.Wallet.Balance += Mortgage;
         }
         Level--;
+    }
+
+    public virtual decimal GetRent() {
+        if (Level == LevelState.Mortgaged) return 0;
+        return RentPrices[(int)Level];
     }
 
     public override void OnVisit(Player plr) {
