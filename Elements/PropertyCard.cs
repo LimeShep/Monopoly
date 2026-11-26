@@ -20,13 +20,15 @@ public class PropertyCard : GameCard {
     public virtual bool Levelable { get; protected set; } = true;
     public PropertyGroup Group { get; private set; }
 
-    public static PropertyCard Create<TCard>(string name, string qrId, PropertyGroup group, decimal price, decimal[] rentPrices) where TCard : GameCard {
-        var property = Activator.CreateInstance(typeof(TCard));
+    public static TCard Create<TCard>(string name, string qrId, PropertyGroup group, decimal price, decimal[] rentPrices) where TCard : PropertyCard {
+        var property = Activator.CreateInstance(typeof(TCard)) as TCard;
+        if (property == null) return null;
         property.Name = name;
         property.QrId = qrId;
         property.Group = group;
         property.Price = price;
         property.RentPrices = rentPrices;
+        return property;
     }
 
     public static PropertyCard Create(string name, string qrId, PropertyGroup group, decimal price, decimal[] rentPrices) {

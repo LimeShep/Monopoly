@@ -1,3 +1,5 @@
+using Monopoly.Core;
+
 namespace Monopoly.Elements;
 
 public abstract class GameCard {
